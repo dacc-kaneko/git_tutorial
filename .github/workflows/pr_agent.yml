@@ -34,16 +34,11 @@ jobs:
         - メソッド名・関数名だけで実装が理解しにくい場合、分かりやすい日本語でコメントされているか
         - ネストが深い（3以上）条件文などがないか
     steps:
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN_PR_REVIEW }}
-          aws-region: us-east-1
       - name: PR Agent action step
         id: pragent
         uses: qodo-ai/pr-agent@main
         env:
-          AWS.BEDROCK_REGION: us-east-1
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           litellm.drop_params: 'true'
           # 出力の詳細度    
@@ -71,7 +66,7 @@ jobs:
           # コード提案のは回答を日本語で行うよう指示しています
           pr_code_suggestions.extra_instructions: ${{ env.REVIEW_INSTRUCTIONS }}
           # 対応モデルとmax_tokenの参考（https://github.com/qodo-ai/pr-agent/blob/main/pr_agent/algo/__init__.py）
-          config.model: bedrock/us.anthropic.claude-3-5-haiku-20241022-v1:0
-          config.model_turbo: bedrock/us.anthropic.claude-3-5-haiku-20241022-v1:0
-          config.fallback_models: bedrock/us.anthropic.claude-3-5-haiku-20241022-v1:0
+          config.model: gpt-4o-mini
+          config.model_turbo: gpt-4o-mini
+          config.fallback_models: gpt-3.5-turbo
           config.custom_model_max_tokens: 100000
